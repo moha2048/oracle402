@@ -8,13 +8,14 @@ You can redo the whole dashboard UI without touching the payment, policy or agen
 2. **Never commit `.env`.** It holds testnet private keys and is gitignored. Never paste keys into code, chat or screenshots.
 3. **Do not remove or rename any `/api/*` call** (list below). You may change everything about how the data looks.
 4. Static files only: `public/` is served by Express (`express.static`). The simplest route is to keep one `public/index.html` with inline CSS/JS. If you want a framework, it must build to static files into `public/` and you must commit the built output (there is no build step on the demo machine). Do not add a bundler to the repo's root `package.json`.
-5. Work on a branch (`git checkout -b frontend`) and open a PR, or hand Salah the file. Do not push to `main` without telling him. The deadline is **Fri Nov 20, 12:00 PM CST**; the frontend should be merged by about 8 PM tonight so Salah can record the demo video on it.
+5. **Work on the `musa-branch` branch** and open a pull request into `main` when you're ready. `main` is protected: direct pushes from collaborators are blocked, and a PR needs Salah's approval before it merges. Don't create other branches, force-push, or rebase `musa-branch` on your own; to pick up new changes from `main`, run `git pull origin main` while on `musa-branch`. The deadline is **Fri Nov 20, 12:00 PM CST**; the frontend should be merged by about 8 PM tonight so Salah can record the demo video on it.
 6. Do not turn on `MOCK_PAY` for anything shown in the demo. Mock mode is for development only.
 
 ## Run it locally (no money, no keys needed)
 
 ```
 git clone https://github.com/moha2048/oracle402 && cd oracle402
+git checkout musa-branch   # always work here, never on main
 npm install
 npm run seller:mock    # terminal 1: seller on :3000 with fake Gemini data and no paywall
 npm run agent:mock     # terminal 2: dashboard + agent API on http://localhost:3001
@@ -104,3 +105,4 @@ TraceRow  = { t: string /*ISO*/, kind: "user"|"think"|"tool"|"policy"|"payment"|
 - [ ] Looks good at 1440x900 (the demo recording size) without scrolling for the hero, the ask box and the kill switch.
 - [ ] No console errors with `npm run agent:mock`; `npm run typecheck` still passes (you did not touch `src/`).
 - [ ] `git status` shows changes only in `public/` (and `docs/` if you updated the screenshot).
+- [ ] Changes are committed and pushed to `musa-branch`, and a PR into `main` is open: `gh pr create --base main --head musa-branch` (or "Compare & pull request" on GitHub). Tell Salah it's ready for review.
