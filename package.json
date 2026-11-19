@@ -1,0 +1,31 @@
+{
+  "name": "oracle402",
+  "version": "0.1.0",
+  "description": "Pay-per-query prediction-market forecast oracle for AI agents. x402 + Circle Gateway nanopayments on Arc.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "wallets": "tsx scripts/generate-wallets.ts",
+    "balance": "tsx --env-file=.env scripts/balance.ts",
+    "deposit": "tsx --env-file=.env scripts/deposit.ts",
+    "seller": "tsx --env-file=.env src/seller.ts",
+    "agent": "tsx --env-file=.env src/agent-server.ts",
+    "seller:mock": "MOCK_GEMINI=1 MOCK_PAY=1 tsx src/seller.ts",
+    "agent:mock": "MOCK_GEMINI=1 MOCK_PAY=1 tsx src/agent-server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.10.0",
+    "@circle-fin/x402-batching": "^4.0.0",
+    "@x402/core": "^2.31.0",
+    "@x402/evm": "^2.31.0",
+    "express": "^5.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "viem": "^2.58.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6"
+  }
+}

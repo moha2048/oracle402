@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oracle402: agent spending dashboard</title>
+<style>
+  :root{--bg:#0e1116;--panel:#171b22;--line:#262c36;--tx:#e6e9ef;--mut:#8b94a3;--ok:#3ecf8e;--warn:#f5b942;--bad:#ef5b5b;--acc:#6ea8ff}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+  header{display:flex;gap:12px;align-items:center;padding:16px 24px;border-bottom:1px solid var(--line)}
+  h1{font-size:18px;margin:0}.badge{font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--mut)}
+  .badge.warn{color:var(--warn);border-color:var(--warn)}.badge.ok{color:var(--ok);border-color:var(--ok)}
+  main{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px 24px;max-width:1200px;margin:auto}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}.full{grid-column:1/-1}
+  h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:0 0 12px}
+  .big{font-size:30px;font-weight:650}.mut{color:var(--mut)}
+  .bar{height:12px;background:#0b0e13;border-radius:99px;overflow:hidden;border:1px solid var(--line);margin:10px 0;position:relative}
+  .fill{height:100%;background:var(--ok);transition:width .3s}.mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--warn)}
+  button{background:#222a36;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;font:inherit}
+  button:hover{border-color:var(--acc)}button.kill{background:#4a1d1d;border-color:var(--bad)}button.go{background:#173826;border-color:var(--ok)}
+  input[type=text]{width:100%;background:#0b0e13;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.chip{font-size:12px;padding:4px 10px}
+  table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:500}.mono{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all}
+  #trace{max-height:300px;overflow:auto;font-family:ui-monospace,Menlo,monospace;font-size:12px}
+  #trace div{padding:2px 0;border-bottom:1px dashed #20262f}.k-policy{color:var(--warn)}.k-payment{color:var(--ok)}.k-error{color:var(--bad)}.k-answer{color:var(--acc)}.k-user{color:#c3a6ff}
+  .modal{display:none;position:fixed;inset:0;background:#000a;align-items:center;justify-content:center}.modal.on{display:flex}
+  .modal .box{background:var(--panel);border:1px solid var(--warn);border-radius:12px;padding:20px;max-width:440px}
+  #answer{white-space:pre-wrap;margin-top:10px}
+</style></head><body>
+<header><h1>Oracle402</h1><span class="badge">agent spending dashboard</span><span id="b-llm" class="badge"></span><span id="b-pay" class="badge"></span><span id="b-run" class="badge"></span></header>
+<main>
+  <section class="card"><h2>Budget</h2>
+    <div class="big"><span id="spent">0</span> <span class="mut">/ <span id="budget">0</span> USDC</span></div>
+    <div class="bar"><div class="fill" id="fill" style="width:0%"></div><div class="mark" id="mark"></div></div>
+    <div class="mut">Remaining <b id="remaining"></b> USDC &middot; auto-approve up to <span id="appr"></span> &middot; max per call <span id="maxcall"></span><br>Gateway balance: <b id="gbal">n/a</b> USDC</div>
+    <div class="row"><button class="kill" id="kill">KILL SWITCH</button><button class="go" id="resume" style="display:none">Resume spending</button>
+      <button id="raise">Raise budget +0.01</button><button id="resetSpend">Reset spend counter</button></div>
+  </section>
+  <section class="card"><h2>Ask the agent</h2>
+    <input type="text" id="q" placeholder="e.g. What are the odds on the Fed decision in December?">
+    <div class="row"><button id="ask">Ask</button>
+      <button class="chip" data-q="What are the odds on the Fed decision in December?">Fed December?</button>
+      <button class="chip" data-q="Where is the market expecting BTC on November 30?">BTC Nov 30?</button>
+      <button class="chip" data-q="Will crypto market structure legislation become law?">Crypto bill?</button></div>
+    <div id="answer"></div>
+  </section>
+  <section class="card full"><h2>Payment ledger (every row is a real USDC payment unless flagged MOCK)</h2>
+    <table><thead><tr><th>Time</th><th>Question</th><th>Event</th><th>USDC</th><th>Network</th><th>Tx / ref</th><th>Approval</th></tr></thead><tbody id="ledger"></tbody></table></section>
+  <section class="card full"><h2>Decision trace</h2><div id="trace"></div></section>
+</main>
+<div class="modal" id="modal"><div class="box"><h2 style="color:var(--warn)">Human approval required</h2>
+  <p id="mtext"></p><div class="row"><button class="go" id="yes">Approve</button><button class="kill" id="no">Deny</button></div></div></div>
+<script>
+const $=id=>document.getElementById(id), post=(u,b)=>fetch(u,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b||{})});
+let last={};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function tick(){
+  let s; try{ s=await (await fetch('/api/state')).json(); }catch{ return; } last=s;
+  $('spent').textContent=s.spentUsdc.toFixed(4); $('budget').textContent=s.budgetUsdc.toFixed(4);
+  $('remaining').textContent=s.remainingUsdc.toFixed(4); $('appr').textContent=s.approveAfterUsdc.toFixed(4); $('maxcall').textContent=s.maxPerCallUsdc;
+  $('gbal').textContent=s.gatewayBalanceUsdc??'n/a';
+  const pct=s.budgetUsdc?Math.min(100,s.spentUsdc/s.budgetUsdc*100):100; $('fill').style.width=pct+'%';
+  $('fill').style.background=s.killed||pct>=100?'var(--bad)':pct>=s.approveAfterUsdc/s.budgetUsdc*100?'var(--warn)':'var(--ok)';
+  $('mark').style.left=(s.budgetUsdc?s.approveAfterUsdc/s.budgetUsdc*100:0)+'%';
+  $('kill').style.display=s.killed?'none':''; $('resume').style.display=s.killed?'':'none';
+  $('b-llm').textContent=s.mode.llm?'LLM agent':'scripted agent'; $('b-llm').className='badge '+(s.mode.llm?'ok':'warn');
+  $('b-pay').textContent=s.mode.mockPay?'MOCK PAYMENTS':'real USDC on Arc testnet'; $('b-pay').className='badge '+(s.mode.mockPay?'warn':'ok');
+  $('b-run').textContent=s.killed?'KILLED':s.running?'agent working':'idle'; $('b-run').className='badge '+(s.killed?'warn':'');
+  $('ask').disabled=s.running; $('answer').textContent=s.lastAnswer||'';
+  $('ledger').innerHTML=s.ledger.slice().reverse().map(r=>`<tr><td>${new Date(r.at).toLocaleTimeString()}</td><td>${esc(r.question)}</td><td>${esc(r.ticker)}</td><td>${r.amountUsdc}</td><td>${esc(r.network||'')}${r.mock?' <b style="color:var(--warn)">MOCK</b>':''}</td><td class="mono">${esc(r.transaction||(r.payer?('payer '+r.payer):''))}</td><td>${r.approvedByHuman?'human':'auto'}</td></tr>`).join('')||'<tr><td colspan="7" class="mut">No payments yet.</td></tr>';
+  const tr=$('trace'), atBottom=tr.scrollTop+tr.clientHeight>=tr.scrollHeight-20;
+  tr.innerHTML=s.trace.map(t=>`<div class="k-${t.kind}"><span class="mut">${new Date(t.t).toLocaleTimeString()}</span> [${t.kind}] ${esc(t.msg)}</div>`).join(''); if(atBottom) tr.scrollTop=tr.scrollHeight;
+  if(s.pending){ $('modal').classList.add('on'); $('mtext').textContent=`Buy forecast for ${s.pending.ticker} at ${s.pending.priceUsdc} USDC? ${s.pending.reason}`; } else $('modal').classList.remove('on');
+}
+$('ask').onclick=()=>{const q=$('q').value.trim(); if(q) post('/api/ask',{question:q});};
+$('q').addEventListener('keydown',e=>{if(e.key==='Enter')$('ask').click();});
+document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('q').value=b.dataset.q; $('ask').click();});
+$('kill').onclick=()=>post('/api/kill'); $('resume').onclick=()=>post('/api/resume');
+$('raise').onclick=()=>post('/api/budget',{budgetUsdc:last.budgetUsdc+0.01}); $('resetSpend').onclick=()=>post('/api/reset-spend');
+$('yes').onclick=()=>post('/api/approve',{approve:true}); $('no').onclick=()=>post('/api/approve',{approve:false});
+setInterval(tick,1000); tick();
+</script></body></html>
