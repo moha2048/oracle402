@@ -79,7 +79,7 @@ Offline dry run (no wallets, no network): `npm run seller:mock` and `npm run age
 1. Ask "Will the Fed cut rates in December?": watch the free search, the policy check, the payment, the answer.
 2. Ask more until spend crosses the auto-approve line: the approval prompt appears; approve one, deny one.
 3. Run to the hard cap: the agent is refused and explains why.
-4. Hit the kill switch; show the ledger with tx hashes.
+4. Hit the kill switch; show the ledger. Its Tx/ref column holds Circle Gateway transfer IDs, not onchain hashes: the onchain proof is the Gateway batch settlement tx linked under "How we use Arc".
 
 ## What we'd build next
 Dynamic pricing by market liquidity, multi-market aggregation, a discoverable agent marketplace listing, and per-agent budgets.

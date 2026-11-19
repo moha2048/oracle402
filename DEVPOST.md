@@ -97,7 +97,7 @@ Check after recording: the video is 2–3 minutes and set to public or unlisted 
 ## 9. Pre-submit checklist ("What to Submit")
 - [ ] **Public GitHub repo, built during the hackathon:** pushed to https://github.com/moha2048/oracle402, set to public. Commit history starts Nov 19. `.env` is not in the repo (check on GitHub).
 - [x] **README covers** architecture, decision loop, safety limits, Arc contract addresses and tx links (USDC, GatewayWallet, GatewayMinter, deposit tx, batch settlement tx).
-- [ ] **README demo script section:** step 4 says "show the ledger with tx hashes", but the ledger shows Gateway transfer IDs. Fix the wording to match the video.
+- [x] **README demo script section:** step 4 says "show the ledger with tx hashes", but the ledger shows Gateway transfer IDs. Fix the wording to match the video.
 - [ ] **Working demo:** seller and agent run locally on live Gemini and real Arc testnet payments (verified Nov 19). **TODO:** if judges need a deployed URL, decide whether to deploy or explain local-only in the submission.
 - [ ] **Demo video:** 2–3 min, accessible link pasted into Devpost.
 - [ ] **Written answers:** section 5 pasted; LLM-mode TODO resolved.
