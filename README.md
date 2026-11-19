@@ -49,13 +49,15 @@ fraction of a cent in USDC, while a policy engine keeps the agent inside a budge
 - Payments settle in USDC on **Arc testnet** (USDC is the native gas token, so cost is predictable).
 - Gasless x402 nanopayments via **Circle Gateway** (`@circle-fin/x402-batching`): the buyer signs EIP-3009 authorizations offchain; Gateway batches them into a single onchain settlement.
 - One-time onchain step: the buyer deposits USDC into its Gateway balance (`npm run deposit`).
-- Contracts/addresses used (TODO: fill from Circle docs + your own deposit tx):
-  - Arc testnet USDC: `TODO`
-  - Circle Gateway Wallet contract (Arc testnet): `TODO`
+- Network: Arc Testnet, chain ID `5042002` (x402 network `eip155:5042002`), Circle Gateway domain `26`.
+- Contracts/addresses used (from [Circle USDC addresses](https://developers.circle.com/stablecoins/usdc-contract-addresses) and [Gateway contract addresses](https://developers.circle.com/gateway/references/contract-addresses); both also appear in our live `PAYMENT-REQUIRED` header):
+  - Arc testnet USDC: [`0x3600000000000000000000000000000000000000`](https://testnet.arcscan.app/address/0x3600000000000000000000000000000000000000)
+  - Circle Gateway Wallet contract (Arc testnet, x402 `verifyingContract`): [`0x0077777d7EBA4688BDeF3E311b846F25870A19B9`](https://testnet.arcscan.app/address/0x0077777d7EBA4688BDeF3E311b846F25870A19B9)
+  - Circle Gateway Minter (Arc testnet): `0x0022222ABE238Cc2C7Bb1f21003F0a260052475B`
   - Buyer wallet: `0x7933C00e2255D94717b7F8266eCD0066D02f310b`  ·  Seller wallet: `0xda3Bd18EfbB8A543b6574279ac026A8EAd96d849`
   - USDC approval tx: [`0x1a1b6e90c29926ba5c182c510d1098a780fe862e589b8fecd5dfc605363a7af9`](https://testnet.arcscan.app/tx/0x1a1b6e90c29926ba5c182c510d1098a780fe862e589b8fecd5dfc605363a7af9)
   - Gateway deposit tx (5 USDC): [`0x64b09654489ae4041eaa9d4633aa974fa087437fd3e5eed1cfe3756ac7d022c4`](https://testnet.arcscan.app/tx/0x64b09654489ae4041eaa9d4633aa974fa087437fd3e5eed1cfe3756ac7d022c4)
-  - Example batch settlement tx: `TODO`
+  - Example batch settlement tx (Gateway `submitBatch` settling our x402 payments, buyer -> seller): [`0x38cadf8537763a5d3cbdb63539ba6c0a29408962178d892b989510bdf78bbfce`](https://testnet.arcscan.app/tx/0x38cadf8537763a5d3cbdb63539ba6c0a29408962178d892b989510bdf78bbfce)
 
 ## How we use Gemini Prediction Markets
 Seller calls the public REST API (`/v1/prediction-markets/events`, `/events/{ticker}`), reads each contract's

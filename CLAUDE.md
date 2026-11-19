@@ -15,18 +15,23 @@ Oracle402: a pay-per-query forecast oracle for AI agents. A seller API wraps Gem
 - `src/policy.ts`: spending guardrails. `src/agent.ts`: decision loop (Anthropic tool use; scripted fallback if no ANTHROPIC_API_KEY). `src/agent-server.ts`: dashboard API on :3001. `public/index.html`: dashboard.
 - `scripts/`: generate-wallets, deposit, balance. Commands: `npm run seller | agent | balance | deposit | typecheck`, plus `seller:mock` / `agent:mock`.
 
-## Status (as of Thu Nov 19 ~1:45 PM)
-VERIFIED on the user's Mac: wallets generated into .env; buyer funded from Circle faucet; `npm run deposit 5` succeeded (real Arc testnet txs, in README); `npm run balance` shows Gateway available = 5 USDC; seller starts with live Gemini (mock gemini: false).
-VERIFIED in sandbox only (mocked Gemini + mocked pay): policy flow (auto-approve, human approval/deny, hard cap, kill switch), dashboard API.
-VERIFIED live Gemini: 1003 active events (Sports, Crypto, Commodities, Weather); `search=` is a title substring match; titles use tickers ("BTC price on November 30", "Fed decision in December?"). Added alias map + merged keyword search; demo chips now use Fed December / BTC Nov 30 / crypto bill (persist through judging; Nov 19 markets expire today).
-NOT YET VERIFIED: (1) [partly resolved above] live Gemini search: `/markets?q=bitcoin` returned `{"markets":[]}`; real Gemini shape is `{data:[{id,title,ticker,category,status,contracts:[{label,ticker,instrumentSymbol,expiryDate,prices:{bestBid,bestAsk,lastTradePrice,buy,sell}}]}]}`. Active markets seem sports-heavy; need to find what exists (categories, whether `search=` works) and build demo questions around REAL live markets. (2) x402 paywall returns 402 unpaid, and `GatewayClient.pay()` completes a real payment; (3) LLM mode; (4) dashboard end-to-end against real payments.
+## Status (as of Thu Nov 19 ~2:05 PM CST)
+VERIFIED on the user's Mac, all against REAL services (no MOCK_*):
+- Wallets in .env; buyer funded; `npm run deposit 5` done (txs in README).
+- Live Gemini search: 1003 active events; `search=` is a title substring match. `searchEvents` queries the full question + keywords (aliases like bitcoin->btc) in parallel, then ranks by title-word overlap. All 3 dashboard chips resolve to the right market first (FED261211, BTC2611302200, CRYPTOSTRUCT26).
+- x402: unpaid `/forecast/:ticker` -> 402 + PAYMENT-REQUIRED (Arc eip155:5042002, 1000 micro-USDC, GatewayWallet verifyingContract). Unknown ticker -> 404 before the paywall.
+- Real `GatewayClient.pay()` works (`scripts/paid-call.ts`): 200, `/api/revenue` row, Gateway balance 5 -> 4.999. `paid.transaction` is a Gateway transfer UUID, not an onchain hash; Gateway settles onchain via `submitBatch` on GatewayWallet roughly every 15 min.
+- Scripted agent via dashboard API on real payments: ledger rows with network + payer; calls 1-5 auto, 6+ need human approval (deny = no payment), 11th refused by hard cap, kill switch blocks. Answers show at most 6 contracts (ladders: strikes nearest 50%; multi-outcome: most likely first).
+- README has Arc USDC / GatewayWallet / GatewayMinter addresses from Circle docs. Git initialised, first commit made, .env ignored.
+NOT YET DONE: (1) LLM mode (needs ANTHROPIC_API_KEY credits; the tool result is now slimmed to label+probability); (2) push to a public GitHub repo; (4) demo video; (5) Devpost submission.
+Note: agent state (ledger, spend) is in memory, so restart `npm run agent` or POST /api/reset-spend before recording the demo. Gateway balance ~4.987 USDC.
 
 ## Gotchas
 - Gemini and Circle are unreachable from Claude's cloud sandbox; only this machine reaches them. Test real flows here.
 - Seller runs without watch mode: restart `npm run seller` after editing src/.
 - `.env` holds TESTNET private keys; never commit it (it's gitignored). Don't print keys.
-- Dashboard question chips and mock fixtures reference Fed/BTC/ETH; replace with markets that actually exist on live Gemini.
+- Demo chips use Fed December / BTC Nov 30 / crypto bill; these persist through judging. Intraday and Nov 19/20 markets expire.
 - Prices from Gemini are strings in [0,1]; probability = midpoint of bestBid/bestAsk, else lastTradePrice.
 
 ## Remaining TODO (priority order)
-1. Fix live Gemini search + pick real demo markets. 2. Confirm 402 and one real paid call end to end (ledger shows tx). 3. Add ANTHROPIC_API_KEY, test LLM loop. 4. git init, public GitHub repo. 5. README: fill Arc USDC + Gateway contract addresses and a batch settlement tx. 6. Record 2-3 min demo (ask, pay, approval, hit cap, kill switch, ledger). 7. Devpost: select track Agentic, chain award Arc, bounty Gemini, opt in to prizes, written answers, links; submit by ~10:30 AM Fri.
+1-2. DONE. 3. Add ANTHROPIC_API_KEY, test LLM loop. 4. Push public GitHub repo (git init done). 5. DONE (README addresses + batch tx). 6. Record 2-3 min demo (ask, pay, approval, hit cap, kill switch, ledger). 7. Devpost: select track Agentic, chain award Arc, bounty Gemini, opt in to prizes, written answers, links; submit by ~10:30 AM Fri.
