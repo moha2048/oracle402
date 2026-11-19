@@ -12,7 +12,7 @@ Oracle402: a pay-per-query forecast oracle for AI agents. A seller API wraps Gem
 ## Layout
 - `src/gemini.ts`: Gemini REST wrapper (searchEvents free, getEventForecast paid). MOCK_GEMINI=1 uses fixtures.
 - `src/seller.ts`: Express. Free: /pricing, /markets?q=. Paid (x402): /forecast/:ticker. Pre-checks ticker BEFORE paywall so agents aren't charged for 404s. MOCK_PAY=1 skips paywall (dev only).
-- `src/policy.ts`: spending guardrails. `src/agent.ts`: decision loop (Anthropic tool use; scripted fallback if no ANTHROPIC_API_KEY). `src/agent-server.ts`: dashboard API on :3001. `public/index.html`: dashboard.
+- `src/policy.ts`: spending guardrails. `src/agent.ts`: decision loop (Anthropic tool use; scripted fallback if no ANTHROPIC_API_KEY). `src/agent-server.ts`: dashboard API on :3001. `public/index.html`: dashboard. **Frontend work: read `FRONTEND.md` first** (API contract, rules, mock run). Only edit `public/`.
 - `scripts/`: generate-wallets, deposit, balance. Commands: `npm run seller | agent | balance | deposit | typecheck`, plus `seller:mock` / `agent:mock`.
 
 ## Status (as of Thu Nov 19 ~2:05 PM CST)
