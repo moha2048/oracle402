@@ -6,8 +6,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
   :root{
-    --bg:#0b0b0c;--line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.16);
-    --text:#f5f6f8;--muted:#8a8f98;--faint:#5b6068;--accent:#3b6bff;--ok:#3ddc97;--warn:#f5b942;--danger:#ff5a5f;
+    --bg:#0c0d0f;--line:rgba(255,255,255,.10);--line-strong:rgba(255,255,255,.22);
+    --text:#f7f8fa;--muted:#a7adb7;--faint:#7d838d;--accent:#3b6bff;--ok:#3ddc97;--warn:#f5b942;--danger:#ff5a5f;
     --grid:rgba(120,150,255,.05);
     --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
@@ -21,7 +21,7 @@
     background-size:48px 48px;background-position:center -1px;
     -webkit-mask-image:radial-gradient(ellipse 80% 45% at 50% 0%,#000 30%,transparent 85%);mask-image:radial-gradient(ellipse 80% 45% at 50% 0%,#000 30%,transparent 85%)}
   .wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 32px}
-  .label{font:500 11px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .label{font:500 11.5px/1.2 var(--mono);letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
   .num{font-variant-numeric:tabular-nums}
   :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
   section{border-bottom:1px solid var(--line)}
@@ -42,7 +42,9 @@
   .badge.live{color:var(--text)}.badge.live::before{background:var(--text);animation:blink 1s ease-in-out infinite}
 
   /* budget band */
-  .budget{padding:28px 0 26px}
+  .budget{padding:26px 0 26px}
+  .bhead{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap}
+  #login{padding:9px 18px}
   .budget-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px 40px;flex-wrap:wrap;margin-top:10px}
   .spent{font:300 clamp(44px,5.4vw,68px)/1 var(--sans);letter-spacing:-.03em;white-space:nowrap}
   .spent .cur{color:var(--muted)}
@@ -92,7 +94,7 @@
   .qa .row{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:baseline}
   .qa .row+.row{margin-top:8px}
   .qa .k{font:500 11px/1.6 var(--mono);letter-spacing:.12em;color:var(--muted)}
-  #qtext{color:var(--muted);font-size:15px}
+  #qtext{color:#c9ced6;font-size:15px}
   #answer{white-space:pre-wrap;font-size:16px;line-height:1.6;max-width:118ch}
   #answer.wait{color:var(--muted)}
   #answer.wait::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-left:8px;vertical-align:middle;animation:blink 1s ease-in-out infinite}
@@ -127,7 +129,7 @@
   .trow{display:grid;grid-template-columns:62px 72px minmax(0,1fr);gap:12px;padding:10px 8px;margin:0 -8px;font-size:14px;line-height:1.5;border-bottom:1px solid var(--line)}
   .trow .tm{font:400 12px/1.6 var(--mono);color:var(--faint)}
   .trow .k{font:500 10.5px/1.9 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-  .trow .m{color:var(--muted);overflow-wrap:anywhere}
+  .trow .m{color:#c9ced6;overflow-wrap:anywhere}
   .trow.k-user .m,.trow.k-answer .m{color:var(--text)}
   .trow.k-user .k,.trow.k-answer .k{color:var(--text)}
   .trow.ok .k{color:var(--ok)}
@@ -175,14 +177,14 @@
   <div class="brand">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke="currentColor" stroke-opacity=".55"/><circle cx="12" cy="12" r="4" fill="currentColor"/><circle cx="18.2" cy="5.8" r="1.6" fill="currentColor"/></svg>
     <span>Oracle<span class="n">402</span></span>
-    <span class="sub">Agent spending, under control</span>
   </div>
-  <div class="badges"><span id="b-llm" class="badge"></span><span id="b-pay" class="badge"></span><span id="b-run" class="badge"></span></div>
+  <button class="btn" id="login" type="button">Log in</button>
 </div></header>
 
 <main class="wrap">
   <section class="budget" aria-label="Budget">
-    <div class="label">Spent against hard cap</div>
+    <div class="bhead"><div class="label">Spent against hard cap</div>
+      <div class="badges"><span id="b-llm" class="badge"></span><span id="b-pay" class="badge"></span><span id="b-run" class="badge"></span></div></div>
     <div class="budget-row">
       <div class="spent num"><span class="cur">$</span><span id="spent">0.000</span><span class="of">/ <b id="budget">0.000</b></span><span class="unit">USDC</span></div>
       <div class="facts">
