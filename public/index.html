@@ -15,9 +15,8 @@
     color-scheme:dark;
   }
   *{box-sizing:border-box}
-  html{background:var(--bg)}
-  html,body{min-height:100%}
-  body{margin:0;background:var(--gradient) fixed,var(--bg);color:var(--text);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  html{min-height:100%;background:var(--gradient) fixed,var(--bg)}
+  body{margin:0;background:transparent;color:var(--text);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
   body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
     background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
     background-size:48px 48px;background-position:center -1px;
@@ -346,7 +345,7 @@ function traceTone(t){
   }
   return'';
 }
-const seen={ledger:new Set(),trace:new Set()},sig={ledger:'',trace:''};let first=true;
+const seen={ledger:new Set(),trace:new Set()},sig={ledger:null,trace:null};let first=true;
 const netName=n=>({'eip155:5042002':'Arc testnet'})[n]||n||'';
 const micro=v=>Math.round(Number(v)*1e6);
 
