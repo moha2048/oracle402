@@ -128,6 +128,8 @@ Rules:
 - Call buy_forecast (costs real USDC) ONLY for the single most relevant event, and only if its probability would change your answer.
 - If a purchase is denied (budget, allowlist, kill switch, human refusal), do NOT retry. Explain that you were stopped and answer with clear caveats.
 - Report probabilities as market-implied odds, never as certainties. This is not financial advice.
+- Every number you state must come straight from the forecast result. If you combine outcomes (e.g. "a cut" = Cut 25bps + Cut >25bps), name them and their individual odds in the same answer, and list every outcome you mention.
+- Contracts with thin:true have no live bid (price is a stale last trade); say they are thinly traded. Only mention a price total if you use pricesSumTo exactly.
 - Keep the final answer under 120 words.`;
 
 const TOOLS: Anthropic.Tool[] = [
@@ -174,9 +176,7 @@ async function llmLoop(question: string): Promise<string> {
       } else if (b.name === "buy_forecast") {
         const r = await toolBuy(question, String(input.ticker));
         const d: any = r.data;
-        const slim = r.ok
-          ? { title: d.title, expiry: d.expiry, asOf: d.asOf, contracts: (d.contracts ?? []).map((c: any) => ({ label: c.label, probability: c.probability })) }
-          : d;
+        const slim = r.ok ? slimForecast(d) : d;
         results.push({ type: "tool_result", tool_use_id: b.id, is_error: !r.ok, content: JSON.stringify(slim) });
       } else {
         results.push({ type: "tool_result", tool_use_id: b.id, is_error: true, content: "unknown tool" });
@@ -202,6 +202,26 @@ async function scriptedLoop(question: string): Promise<string> {
   const extra = [morePriced ? `+${morePriced} more` : "", unpriced ? `${unpriced} unpriced` : ""].filter(Boolean).join(", ");
   const lines = shown.map((c) => `${c.label}: ${c.probability === null ? "n/a" : Math.round(c.probability * 100) + "%"}`);
   return `Market-implied odds for "${f.title}": ${lines.join("; ")}${extra ? ` (${extra})` : ""}. (Not financial advice.)`;
+}
+
+/** What the LLM sees after a paid call: label + probability, flags for stale prices,
+ *  and (for mutually exclusive outcomes) the raw price total so it never invents one. */
+export function slimForecast(d: any) {
+  const all: any[] = d.contracts ?? [];
+  const contracts = all.map((c) => ({
+    label: c.label,
+    probability: c.probability === null ? null : Math.round(c.probability * 1000) / 1000,
+    ...(c.basis === "last_trade" ? { thin: true } : {}), // no live two-sided quote: stale last trade
+  }));
+  const ladder = all.length > 0 && all.every((c) => /or (above|below)|above|below/i.test(String(c.label)));
+  const priced = all.filter((c) => c.probability !== null);
+  const sum = priced.reduce((s, c) => s + c.probability, 0);
+  return {
+    title: d.title, expiry: d.expiry, asOf: d.asOf,
+    kind: ladder ? "strike_ladder" : "mutually_exclusive_outcomes",
+    ...(ladder ? {} : { pricesSumTo: Math.round(sum * 1000) / 1000 }),
+    contracts,
+  };
 }
 
 /** Keep answers readable: strike ladders (e.g. BTC "$X or above") can have 20+ contracts.
