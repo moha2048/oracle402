@@ -44,7 +44,11 @@
   /* budget band */
   .budget{padding:26px 0 26px}
   .bhead{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap}
-  #login{padding:9px 18px}
+  .wallet{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line-strong);border-radius:999px;padding:8px 14px;color:var(--text);text-decoration:none;transition:border-color .15s,background-color .15s}
+  .wallet:hover{border-color:var(--accent);background:rgba(59,107,255,.06)}
+  .wallet .addr{font:500 13px/1 var(--mono)}
+  .wallet svg{color:var(--muted)}
+  @media (max-width:420px){.wallet .label{display:none}}
   .budget-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px 40px;flex-wrap:wrap;margin-top:10px}
   .spent{font:300 clamp(44px,5.4vw,68px)/1 var(--sans);letter-spacing:-.03em;white-space:nowrap}
   .spent .cur{color:var(--muted)}
@@ -59,6 +63,17 @@
   #mark{position:absolute;top:-5px;width:1px;height:12px;background:var(--text);opacity:.75;transition:left .4s ease}
   #mark::after{content:"approval";position:absolute;top:15px;left:0;transform:translateX(-50%);font:500 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
   .meter-ends{display:flex;justify-content:space-between;margin-top:8px;font:500 10px/1 var(--mono);letter-spacing:.12em;color:var(--muted)}
+  /* what happens on the next purchase */
+  .hint{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13.5px;color:var(--muted);min-height:20px}
+  .hint:empty{display:none}
+  .hint.warn{color:var(--warn)}.hint.danger{color:var(--danger)}
+  /* kill switch engaged */
+  .budget.killed{background:linear-gradient(180deg,rgba(255,90,95,.07),rgba(255,90,95,0) 85%)}
+  .halted{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin-top:14px;padding:12px 14px 12px 16px;border:1px solid rgba(255,90,95,.5);background:rgba(255,90,95,.09);border-radius:6px;font-size:15px}
+  .halted[hidden]{display:none}
+  .halted .dot{color:var(--danger)}
+  .halted b{font-weight:500;color:var(--danger)}
+  .halted .btn{margin-left:auto;padding:8px 14px}
 
   /* buttons */
   button{font:inherit;color:inherit}
@@ -96,6 +111,18 @@
   .qa .k{font:500 11px/1.6 var(--mono);letter-spacing:.12em;color:var(--muted)}
   #qtext{color:#c9ced6;font-size:15px}
   #answer{white-space:pre-wrap;font-size:16px;line-height:1.6;max-width:118ch}
+  #answer.rich{white-space:normal}
+  /* parsed answer: one bar per outcome */
+  .odds{max-width:760px}
+  .otitle{font-size:16px;margin-bottom:10px}
+  .orow{display:grid;grid-template-columns:minmax(0,230px) minmax(80px,1fr) 52px;gap:14px;align-items:center;padding:4px 0}
+  .ol{font-size:14px;color:#c9ced6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ob{height:6px;background:rgba(255,255,255,.09);border-radius:999px;overflow:hidden}
+  .ob i{display:block;height:100%;background:rgba(247,248,250,.85);border-radius:999px;transform-origin:left;animation:grow .5s ease-out both}
+  .op{font:500 14px/1 var(--mono);text-align:right}
+  .onote{margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .stopped{font-size:15.5px;line-height:1.6;color:#c9ced6}
+  .stopped .st{margin-right:8px;font-weight:500}
   #answer.wait{color:var(--muted)}
   #answer.wait::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-left:8px;vertical-align:middle;animation:blink 1s ease-in-out infinite}
 
@@ -105,9 +132,12 @@
   .panel{min-width:0}
   .panel h2{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0;padding:28px 0 12px;border-bottom:1px solid var(--line-strong);font:500 15px/1 var(--sans);letter-spacing:-.005em}
   .rows{list-style:none;margin:0;padding:0}
+  .hr{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;justify-content:flex-end}
+  .settle{font:500 13px/1 var(--sans);color:var(--text);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:4px;white-space:nowrap}
+  .settle:hover{text-decoration-color:var(--text)}
   .rows>li{border-bottom:1px solid var(--line)}
 
-  .lrow{display:grid;grid-template-columns:44px minmax(0,1fr) 78px 112px minmax(0,150px);gap:14px;padding:13px 0;align-items:start}
+  .lrow{display:grid;grid-template-columns:44px minmax(0,1fr) 78px 112px minmax(0,170px);gap:14px;padding:13px 0;align-items:start}
   .lrow .no{font:400 12px/1.6 var(--mono);color:var(--faint)}
   .tk{font:500 13px/1.5 var(--mono)}
   .q{color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -132,6 +162,7 @@
   .trow .m{color:#c9ced6;overflow-wrap:anywhere}
   .trow.k-user .m,.trow.k-answer .m{color:var(--text)}
   .trow.k-user .k,.trow.k-answer .k{color:var(--text)}
+  .trow.k-think .m{color:var(--muted)}
   .trow.ok .k{color:var(--ok)}
   .trow.warn{background:rgba(245,185,66,.08)}.trow.warn .k{color:var(--warn)}.trow.warn .m{color:var(--text)}
   .trow.danger{background:rgba(255,90,95,.07)}.trow.danger .k{color:var(--danger)}.trow.danger .m{color:var(--text)}
@@ -150,6 +181,7 @@
   @keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   @keyframes ring{from{transform:scale(1);opacity:.65}to{transform:scale(3);opacity:0}}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
   @keyframes pop{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
@@ -170,6 +202,8 @@
     .lrow .stcell,.lrow .idcell{grid-column:1/-1}
     .trow{grid-template-columns:56px minmax(0,1fr)}
     .trow .m{grid-column:1/-1}
+    .orow{grid-template-columns:minmax(0,1fr) 72px 46px;gap:10px}
+    .halted .btn{margin-left:0}
   }
 </style></head><body>
 
@@ -178,13 +212,14 @@
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke="currentColor" stroke-opacity=".55"/><circle cx="12" cy="12" r="4" fill="currentColor"/><circle cx="18.2" cy="5.8" r="1.6" fill="currentColor"/></svg>
     <span>Oracle<span class="n">402</span></span>
   </div>
-  <button class="btn" id="login" type="button">Log in</button>
+  <a class="wallet" id="wallet" href="https://testnet.arcscan.app/address/0x7933C00e2255D94717b7F8266eCD0066D02f310b" target="_blank" rel="noopener" title="Agent's buyer wallet on Arc testnet (opens arcscan)"><span class="label">Buyer wallet</span><span class="addr" id="waddr">0x7933…310b</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5h5v5M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 </div></header>
 
 <main class="wrap">
   <section class="budget" aria-label="Budget">
     <div class="bhead"><div class="label">Spent against hard cap</div>
       <div class="badges"><span id="b-llm" class="badge"></span><span id="b-pay" class="badge"></span><span id="b-run" class="badge"></span></div></div>
+    <div class="halted" id="halted" role="status" hidden><span class="dot pulse"></span><span><b>Spending halted.</b> The kill switch is on, so every purchase is refused until you resume.</span><button class="btn go" id="resume2">Resume spending</button></div>
     <div class="budget-row">
       <div class="spent num"><span class="cur">$</span><span id="spent">0.000</span><span class="of">/ <b id="budget">0.000</b></span><span class="unit">USDC</span></div>
       <div class="facts">
@@ -196,6 +231,7 @@
     </div>
     <div class="meter" role="presentation"><div id="fill" style="width:0%"></div><div id="mark"></div></div>
     <div class="meter-ends"><span>0</span><span>CAP</span></div>
+    <div class="hint" id="hint" aria-live="polite"></div>
   </section>
 
   <section class="ask" aria-label="Ask the agent">
@@ -221,7 +257,7 @@
 
   <div class="panels">
     <div class="panel" aria-label="Payment ledger">
-      <h2><span>Payment ledger</span><span class="label" id="ledgerCount"></span></h2>
+      <h2><span>Payment ledger</span><span class="hr"><span class="label" id="ledgerCount"></span><a class="settle" href="https://testnet.arcscan.app/address/0x0077777d7EBA4688BDeF3E311b846F25870A19B9" target="_blank" rel="noopener" title="Circle Gateway Wallet on Arc testnet. Its submitBatch transactions settle these payments onchain.">Onchain settlements ↗</a></span></h2>
       <ol class="rows" id="ledger"></ol>
     </div>
     <div class="panel" aria-label="Decision trace">
@@ -287,6 +323,51 @@ function traceTone(t){
   return'';
 }
 const seen={ledger:new Set(),trace:new Set()},sig={ledger:'',trace:''};let first=true;
+const netName=n=>({'eip155:5042002':'Arc testnet'})[n]||n||'';
+const micro=v=>Math.round(Number(v)*1e6);
+
+// Per-forecast price, read once from the seller's free /pricing endpoint (falls back to the last paid amount).
+let priceMicro=null,priceAsked=false;
+async function loadPrice(seller){
+  if(priceAsked||!seller)return; priceAsked=true;
+  try{const p=await (await fetch(seller.replace(/\/$/,'')+'/pricing')).json();const m=micro(String(p.forecast).replace('$',''));if(m>0)priceMicro=m;}catch{}
+}
+
+// The scripted agent writes answers in a fixed format; show those as odds bars or a one-line refusal.
+// Anything else (e.g. LLM answers) falls back to plain text.
+function renderAnswer(text){
+  const m=/^Market-implied odds for "([\s\S]+?)": ([\s\S]+?)(?: \(([^()]*)\))?\. \(Not financial advice\.\)$/.exec(text);
+  if(m){
+    const items=m[2].split('; ').map(part=>{const i=part.lastIndexOf(': ');return i<0?null:{label:part.slice(0,i),v:part.slice(i+2)};});
+    if(items.length&&items.every(Boolean)){
+      const rows=items.map(it=>{const n=/^(\d+(?:\.\d+)?)%$/.exec(it.v),pct=n?Number(n[1]):null;
+        return `<div class="orow"><span class="ol" title="${esc(it.label)}">${esc(it.label)}</span><span class="ob"><i style="width:${pct===null?0:Math.min(100,pct)}%"></i></span><span class="op">${pct===null?'n/a':pct+'%'}</span></div>`;}).join('');
+      return `<div class="odds"><div class="otitle">${esc(m[1])}</div>${rows}<div class="onote">Market-implied odds from Gemini prediction markets${m[3]?' · '+esc(m[3]):''} · not financial advice</div></div>`;
+    }
+  }
+  const why=stoppedWhy(text);
+  if(why)return `<div class="stopped"><span class="st danger"><span class="dot"></span>Stopped</span>${esc(why)} No payment was made, so there are no odds to show.</div>`;
+  return null;
+}
+// "I was stopped before buying data: {json}. ..." -> plain reason, or null if the text isn't a refusal.
+function stoppedWhy(text){
+  const st=/^I was stopped before buying data: ([\s\S]+)\. I can only give an uncalibrated guess\.$/.exec(text);
+  if(!st)return null;
+  let j=null;try{j=JSON.parse(st[1]);}catch{return null;}
+  return j.error==='payment_denied_by_human'?'A human denied the payment.'
+    :j.error==='payment_denied_by_policy'?(j.reason||'Blocked by the spending policy.')
+    :j.error==='payment_failed'?'The payment failed'+(j.detail?': '+j.detail:'.'):(j.reason||j.error||'Purchase refused.');
+}
+
+// Trace display tweaks: plain-language scripted note, short market lists, "Gateway transfer" instead of "tx".
+function traceMsg(t){
+  let m=t.msg,full='';
+  if(t.kind==='think')m=m.replace(/^\(scripted mode: no ANTHROPIC_API_KEY\)\s*/,'').replace(/^./,c=>c.toUpperCase());
+  if(t.kind==='result'){const r=/^(\d+ market\(s\)): (.+)$/.exec(m);if(r){const l=r[2].split(', ');if(l.length>3){full=t.msg;m=`${r[1]}: ${l.slice(0,3).join(', ')} +${l.length-3} more`;}}}
+  if(t.kind==='payment')m=m.replace(/ tx ([0-9a-fA-F-]{36})/,' · Gateway transfer $1');
+  if(t.kind==='answer'){const why=stoppedWhy(m);if(why){full=t.msg;m='Stopped: '+why+' No payment was made.';}}
+  return {m,full};
+}
 
 async function tick(){
   let s; try{ s=await (await fetch('/api/state')).json(); }catch{ return; } last=s;
@@ -297,21 +378,40 @@ async function tick(){
   $('fill').style.background=s.killed||pct>=100?'var(--danger)':pct>=s.approveAfterUsdc/s.budgetUsdc*100?'var(--warn)':'var(--accent)';
   $('mark').style.left=(s.budgetUsdc?s.approveAfterUsdc/s.budgetUsdc*100:0)+'%';
   $('kill').style.display=s.killed?'none':''; $('resume').style.display=s.killed?'':'none';
+  $('halted').hidden=!s.killed; document.querySelector('.budget').classList.toggle('killed',s.killed);
+  // next-purchase hint
+  loadPrice(s.mode&&s.mode.seller);
+  const price=priceMicro||(s.ledger.length?micro(s.ledger[s.ledger.length-1].amountUsdc):null);
+  const h=$('hint');
+  if(s.killed||!price){h.textContent='';h.className='hint';}
+  else{
+    const sp=micro(s.spentUsdc),cap=micro(s.budgetUsdc),ap=micro(s.approveAfterUsdc);
+    if(sp+price>cap){h.innerHTML='<span class="dot"></span>Cap reached: the next purchase will be refused.';h.className='hint danger';}
+    else if(sp+price>ap){h.innerHTML='<span class="dot pulse"></span>Past the approval line: the next purchase needs your approval.';h.className='hint warn';}
+    else{const n=Math.floor((ap-sp)/price);h.textContent=`Next ${n} purchase${n===1?' is':'s are'} auto-approved, then each one needs your approval.`;h.className='hint';}
+  }
   $('b-llm').textContent=s.mode.llm?'LLM agent':'Scripted agent'; $('b-llm').className='badge '+(s.mode.llm?'ok':'soft');
   $('b-pay').textContent=s.mode.mockPay?'Mock pay':'Live pay · Arc testnet'; $('b-pay').className='badge '+(s.mode.mockPay?'soft':'ok');
   $('b-run').textContent=s.killed?'Killed':s.pending?'Awaiting approval':s.running?'Running':'Idle';
   $('b-run').className='badge '+(s.killed?'danger':s.pending?'warn':s.running?'live':'');
   $('ask').disabled=s.running;
+  const payer=[...s.ledger].reverse().find(r=>r.payer&&!r.mock)?.payer;
+  if(payer&&$('wallet').dataset.addr!==payer){$('wallet').dataset.addr=payer;$('wallet').href='https://testnet.arcscan.app/address/'+payer;$('waddr').textContent=payer.slice(0,6)+'…'+payer.slice(-4);}
 
   // Q + A: the last question asked (from the trace) paired with the agent's answer to it.
   const lastQ=[...s.trace].reverse().find(t=>t.kind==='user');
   $('qa').classList.toggle('on',Boolean(lastQ));
   $('qtext').textContent=lastQ?lastQ.msg:'';
   const a=$('answer');
-  if(s.lastAnswer){a.textContent=s.lastAnswer;a.className='';}
-  else if(s.pending){a.textContent='Waiting for your approval to pay for a forecast';a.className='wait';}
-  else if(s.running){a.textContent='Working';a.className='wait';}
-  else{a.textContent='';a.className='';}
+  if(s.lastAnswer){
+    if(a.dataset.src!==s.lastAnswer){a.dataset.src=s.lastAnswer;const html=renderAnswer(s.lastAnswer);
+      if(html){a.innerHTML=html;a.className='rich';}else{a.textContent=s.lastAnswer;a.className='';}}
+  }else{
+    a.dataset.src='';
+    if(s.pending){a.textContent='Waiting for your approval to pay for a forecast';a.className='wait';}
+    else if(s.running){a.textContent='Working';a.className='wait';}
+    else{a.textContent='';a.className='';}
+  }
 
   // ledger: paid rows from the server + refusals from the trace + the pending approval, numbered oldest first, shown newest first
   const rows=s.ledger.map(r=>({key:'p'+r.at+r.ticker,at:r.at,ticker:r.ticker,question:r.question,status:'paid',r}))
@@ -332,7 +432,7 @@ async function tick(){
       if(x.status==='paid'){const r=x.r;
         return `<li class="lrow ${isNew?'new':''}">${no}${ev}<div class="amt">${fmt(r.amountUsdc)}<span class="tm">${clock(r.at)}</span></div>`+
           `<div class="stcell"><span class="st ${tone}"><span class="dot"></span>${label}</span>${r.mock?'<span class="tag">MOCK</span>':''}<div class="sub">${r.approvedByHuman?'human approved':'auto'}</div></div>`+
-          `<div class="idcell"><div class="id" title="${esc(r.transaction||'')}">${esc(shortId(r.transaction)||'n/a')}</div><div class="sub">Gateway transfer · ${esc(r.network||'')}</div></div></li>`;
+          `<div class="idcell"><div class="id" title="Circle Gateway transfer ID: ${esc(r.transaction||'')}">${esc(shortId(r.transaction)||'n/a')}</div><div class="sub">transfer · ${esc(netName(r.network))}</div></div></li>`;
       }
       return `<li class="lrow refused ${isNew?'new':''}">${no}${ev}<div class="amt">${x.amount!==undefined?fmt(x.amount):'none'}<span class="tm">${clock(x.at)}</span></div>`+
         `<div class="stcell"><span class="st ${tone}"><span class="dot${x.status==='awaiting'?' pulse':''}"></span>${label}</span></div><div class="idcell reason">${esc(x.reason)}</div></li>`;
@@ -341,16 +441,16 @@ async function tick(){
     $('ledgerCount').textContent=`${paid} paid · ${refused} refused${s.pending?' · 1 awaiting':''}`;
   }
 
-  // decision trace (oldest first; stays pinned to the bottom unless scrolled up)
+  // decision trace, newest first (same order as the ledger)
   const ts=s.trace.length?s.trace[0].t+s.trace.length+s.trace[s.trace.length-1].t:'';
   if(ts!==sig.trace){
     sig.trace=ts;
-    const tr=$('trace'), atBottom=tr.scrollTop+tr.clientHeight>=tr.scrollHeight-20;
-    tr.innerHTML=s.trace.map(t=>{
+    const tr=$('trace');
+    tr.innerHTML=[...s.trace].reverse().map(t=>{
       const k=t.t+t.kind+t.msg, isNew=!first&&!seen.trace.has(k); seen.trace.add(k);
-      return `<div class="trow k-${t.kind} ${traceTone(t)} ${isNew?'new':''}"><span class="tm">${clock(t.t)}</span><span class="k">${esc(t.kind)}</span><span class="m">${esc(t.msg)}</span></div>`;
+      const {m,full}=traceMsg(t);
+      return `<div class="trow k-${t.kind} ${traceTone(t)} ${isNew?'new':''}"><span class="tm">${clock(t.t)}</span><span class="k">${esc(t.kind)}</span><span class="m"${full?` title="${esc(full)}"`:''}>${esc(m)}</span></div>`;
     }).join('')||'<div class="empty">The agent has not done anything yet.</div>';
-    if(atBottom) tr.scrollTop=tr.scrollHeight;
     $('traceCount').textContent=`${s.trace.length} entries`;
   }
   first=false;
@@ -360,7 +460,7 @@ async function tick(){
 $('ask').onclick=()=>{const q=$('q').value.trim(); if(q) post('/api/ask',{question:q});};
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')$('ask').click();});
 document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('q').value=b.dataset.q; $('ask').click();});
-$('kill').onclick=()=>post('/api/kill'); $('resume').onclick=()=>post('/api/resume');
+$('kill').onclick=()=>post('/api/kill'); $('resume').onclick=()=>post('/api/resume'); $('resume2').onclick=()=>post('/api/resume');
 $('raise').onclick=()=>post('/api/budget',{budgetUsdc:last.budgetUsdc+0.01}); $('resetSpend').onclick=()=>post('/api/reset-spend');
 $('yes').onclick=()=>post('/api/approve',{approve:true}); $('no').onclick=()=>post('/api/approve',{approve:false});
 setInterval(tick,1000); tick();
