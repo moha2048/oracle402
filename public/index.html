@@ -497,7 +497,8 @@ $('ask').onclick=()=>{const q=$('q').value.trim(); if(q) post('/api/ask',{questi
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')$('ask').click();});
 $('field').addEventListener('click',e=>{if(!e.target.closest('#ask'))$('q').focus();});
 $('q').focus();
-document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('q').value=b.dataset.q; $('ask').click();});
+// Chips only fill the box; the human presses Ask (or Enter) to send.
+document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('q').value=b.dataset.q; $('q').focus();});
 $('kill').onclick=()=>post('/api/kill'); $('resume').onclick=()=>post('/api/resume'); $('resume2').onclick=()=>post('/api/resume');
 $('raise').onclick=()=>post('/api/budget',{budgetUsdc:last.budgetUsdc+0.01}); $('resetSpend').onclick=()=>post('/api/reset-spend');
 $('yes').onclick=()=>post('/api/approve',{approve:true}); $('no').onclick=()=>post('/api/approve',{approve:false});
