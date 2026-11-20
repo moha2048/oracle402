@@ -6,9 +6,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
   :root{
-    --bg:#0b0b0c;--panel:transparent;--line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.16);
-    --text:#f5f6f8;--muted:#8a8f98;--accent:#3b6bff;--ok:#3ddc97;--warn:#f5b942;--danger:#ff5a5f;
-    --grid:rgba(120,150,255,.06);--bracket:rgba(255,255,255,.25);
+    --bg:#0b0b0c;--line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.16);
+    --text:#f5f6f8;--muted:#8a8f98;--faint:#5b6068;--accent:#3b6bff;--ok:#3ddc97;--warn:#f5b942;--danger:#ff5a5f;
+    --grid:rgba(120,150,255,.05);
     --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
     color-scheme:dark;
@@ -16,57 +16,47 @@
   *{box-sizing:border-box}
   html{background:var(--bg)}
   body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-  /* faint grid behind the top of the page, fading out */
   body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
     background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
     background-size:48px 48px;background-position:center -1px;
-    -webkit-mask-image:radial-gradient(ellipse 75% 65% at 50% 25%,#000 35%,transparent 85%);mask-image:radial-gradient(ellipse 75% 65% at 50% 25%,#000 35%,transparent 85%)}
+    -webkit-mask-image:radial-gradient(ellipse 80% 45% at 50% 0%,#000 30%,transparent 85%);mask-image:radial-gradient(ellipse 80% 45% at 50% 0%,#000 30%,transparent 85%)}
   .wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 32px}
-  .label,th{font:500 11px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-  .mono{font-family:var(--mono)}
+  .label{font:500 11px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
   .num{font-variant-numeric:tabular-nums}
   :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  section{border-bottom:1px solid var(--line)}
 
   /* nav */
-  .top{position:relative;z-index:1;border-bottom:1px solid var(--line);background:rgba(11,11,12,.7);backdrop-filter:blur(6px)}
+  .top{position:relative;z-index:1;border-bottom:1px solid var(--line)}
   .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
   .brand{display:flex;align-items:center;gap:10px;font:500 17px/1 var(--sans);letter-spacing:-.01em}
-  .brand .n{font-family:var(--mono);font-weight:500;color:var(--muted)}
-  .brand .sub{margin-left:12px;padding-left:14px;border-left:1px solid var(--line)}
+  .brand .n{font-family:var(--mono);color:var(--muted)}
+  .brand .sub{margin-left:12px;padding-left:14px;border-left:1px solid var(--line);font:400 13px/1 var(--sans);color:var(--muted)}
   .badges{display:flex;gap:8px;flex-wrap:wrap}
   .badge{display:inline-flex;align-items:center;gap:8px;font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:7px 11px;white-space:nowrap}
   .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--muted);flex:none}
   .badge.ok::before{background:var(--ok)}
+  .badge.soft::before{background:var(--warn)}
   .badge.warn{color:var(--warn);border-color:rgba(245,185,66,.3)}.badge.warn::before{background:var(--warn);animation:blink 1.2s ease-in-out infinite}
   .badge.danger{color:var(--danger);border-color:rgba(255,90,95,.4)}.badge.danger::before{background:var(--danger)}
   .badge.live{color:var(--text)}.badge.live::before{background:var(--text);animation:blink 1s ease-in-out infinite}
-  .badge.soft::before{background:var(--warn)}
 
-  /* hero */
-  .hero{position:relative;margin-top:10px;padding:20px 40px 22px;display:grid;grid-template-columns:1fr minmax(320px,440px);gap:40px;align-items:end}
-  .br{position:absolute;width:14px;height:14px;border:0 solid var(--bracket)}
-  .br.tl{top:0;left:0;border-top-width:1px;border-left-width:1px}.br.tr{top:0;right:0;border-top-width:1px;border-right-width:1px}
-  .br.bl{bottom:0;left:0;border-bottom-width:1px;border-left-width:1px}.br.bra{bottom:0;right:0;border-bottom-width:1px;border-right-width:1px}
-  h1{font:300 clamp(36px,4.4vw,56px)/1.04 var(--sans);letter-spacing:-.02em;margin:0}
-  .lede{color:var(--muted);margin:0;font-size:16px;max-width:34ch}
-  .figures{text-align:right}
-  .hero-num{font:300 clamp(52px,5.8vw,76px)/1 var(--sans);letter-spacing:-.03em;margin:6px 0 8px;white-space:nowrap}
-  .of{display:flex;justify-content:flex-end;align-items:baseline;gap:14px}
-  .half-num{font:300 clamp(26px,3vw,36px)/1 var(--sans);letter-spacing:-.02em;color:var(--text);white-space:nowrap}
-  .cur{color:var(--muted);margin-right:.04em}
-  .unit{font:500 12px/1 var(--mono);letter-spacing:.1em;color:var(--muted);margin-left:10px;vertical-align:middle}
-  .meter{position:relative;height:2px;background:var(--line-strong);margin:16px 0 0}
+  /* budget band */
+  .budget{padding:28px 0 26px}
+  .budget-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px 40px;flex-wrap:wrap;margin-top:10px}
+  .spent{font:300 clamp(44px,5.4vw,68px)/1 var(--sans);letter-spacing:-.03em;white-space:nowrap}
+  .spent .cur{color:var(--muted)}
+  .spent .of{font-size:.42em;color:var(--muted);letter-spacing:-.01em;margin-left:.3em}
+  .spent .of b{font-weight:300;color:var(--text)}
+  .spent .unit{font:500 12px/1 var(--mono);letter-spacing:.1em;color:var(--muted);margin-left:10px}
+  .facts{display:flex;gap:10px 28px;flex-wrap:wrap;justify-content:flex-end;padding-bottom:6px}
+  .fact{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+  .fact .v{font:400 15px/1 var(--mono);color:var(--text)}
+  .meter{position:relative;height:2px;background:var(--line-strong);margin-top:22px}
   #fill{height:100%;width:0;background:var(--accent);transition:width .4s ease,background-color .3s ease}
-  #mark{position:absolute;top:-5px;width:1px;height:12px;background:var(--text);opacity:.7;transition:left .4s ease}
-  #mark::after{content:"approval";position:absolute;top:16px;left:0;transform:translateX(-50%);font:500 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  #mark{position:absolute;top:-5px;width:1px;height:12px;background:var(--text);opacity:.75;transition:left .4s ease}
+  #mark::after{content:"approval";position:absolute;top:15px;left:0;transform:translateX(-50%);font:500 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
   .meter-ends{display:flex;justify-content:space-between;margin-top:8px;font:500 10px/1 var(--mono);letter-spacing:.12em;color:var(--muted)}
-
-  /* stat strip */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:12px}
-  .stat{padding:10px 24px 12px;border-left:1px solid var(--line);min-width:0}
-  .stat:first-child{border-left:0}
-  .stat .v{font:300 26px/1.1 var(--sans);letter-spacing:-.02em;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .stat .v small{font:500 11px/1 var(--mono);letter-spacing:.1em;color:var(--muted);margin-left:8px}
 
   /* buttons */
   button{font:inherit;color:inherit}
@@ -75,76 +65,79 @@
   .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   .btn.primary:hover{background:#5480ff;border-color:#5480ff}
   .btn:disabled{opacity:.4;cursor:not-allowed}
-  .btn.quiet{color:var(--muted)}.btn.quiet:hover{color:var(--text)}
   .btn.danger{color:var(--danger);border-color:rgba(255,90,95,.55)}
   .btn.danger:hover{background:rgba(255,90,95,.09);border-color:var(--danger)}
-  .btn.danger::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--danger)}
-  .btn.go::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
+  .btn.danger::before,.btn.go::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--danger)}
+  .btn.go::before{background:var(--ok)}
   .chip{padding:7px 14px;font-size:13px;color:var(--muted)}
   .chip:hover{color:var(--text)}
+  .link{background:none;border:0;padding:6px 2px;cursor:pointer;font:400 13px/1 var(--sans);color:var(--muted);text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:4px}
+  .link:hover{color:var(--text);text-decoration-color:var(--muted)}
 
   /* ask */
-  .ask{padding-top:14px}
-  .askrow{display:flex;gap:16px;align-items:center;border-bottom:1px solid var(--line-strong);padding:0 0 6px;margin-top:4px;transition:border-color .2s}
-  .askrow:focus-within{border-color:var(--accent)}
-  #q{flex:1;min-width:0;background:transparent;border:0;outline:none;color:var(--text);font:300 20px/1.3 var(--sans);letter-spacing:-.01em;padding:4px 0}
-  #q::placeholder{color:#5b6068}
+  .ask{padding:24px 0 22px}
+  .askrow{display:flex;gap:12px;align-items:center}
+  .field{flex:1;min-width:0;border-bottom:1px solid var(--line-strong);transition:border-color .2s}
+  .field:focus-within{border-color:var(--accent)}
+  #q{width:100%;background:transparent;border:0;outline:none;color:var(--text);font:300 22px/1.3 var(--sans);letter-spacing:-.01em;padding:10px 0}
+  #q::placeholder{color:var(--faint)}
   #ask svg{transition:transform .15s}#ask:not(:disabled):hover svg{transform:translateX(2px)}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  #answer{white-space:pre-wrap;line-height:1.55;margin:10px 0 0;max-width:118ch;font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
-  #answer.open{-webkit-line-clamp:unset}
-  #answer:empty{display:none}
+  .under{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-top:14px}
+  .chips,.quiet{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .quiet{gap:16px}
 
-  /* controls */
-  .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;margin-top:10px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .controls .label{margin-right:8px}
-  .controls .spacer{flex:1}
+  /* question + answer, shown only once something has been asked */
+  .qa{display:none;margin-top:20px;border-left:1px solid var(--line-strong);padding:2px 0 2px 18px}
+  .qa.on{display:block}
+  .qa .row{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:baseline}
+  .qa .row+.row{margin-top:8px}
+  .qa .k{font:500 11px/1.6 var(--mono);letter-spacing:.12em;color:var(--muted)}
+  #qtext{color:var(--muted);font-size:15px}
+  #answer{white-space:pre-wrap;font-size:16px;line-height:1.6;max-width:118ch}
+  #answer.wait{color:var(--muted)}
+  #answer.wait::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-left:8px;vertical-align:middle;animation:blink 1s ease-in-out infinite}
 
   /* ledger + trace */
   .panels{display:grid;grid-template-columns:1fr;column-gap:56px;padding-bottom:64px}
-  @media (min-width:1100px){.panels{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}}
+  @media (min-width:1100px){.panels{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}}
   .panel{min-width:0}
-  .panel h2{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0;padding:16px 0 10px;border-bottom:1px solid var(--line)}
-  .panel h2 .label{color:var(--text)}
-  .scroll{overflow-x:auto}
-  table{width:100%;border-collapse:collapse}
-  th{text-align:left;font-size:10.5px;padding:10px 12px 8px 0;white-space:nowrap}
-  td{padding:9px 12px 9px 0;border-top:1px solid var(--line);vertical-align:top;font-size:14px}
-  tbody tr:first-child td{border-top:0}
-  td.t{font:400 12.5px/1.5 var(--mono);color:var(--muted);white-space:nowrap}
-  .tk{font:500 13px/1.4 var(--mono)}
-  .q{color:var(--muted);font-size:12.5px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  td.amt{font:400 13px/1.5 var(--mono);white-space:nowrap}
-  .st{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;font-size:14px}
+  .panel h2{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0;padding:28px 0 12px;border-bottom:1px solid var(--line-strong);font:500 15px/1 var(--sans);letter-spacing:-.005em}
+  .rows{list-style:none;margin:0;padding:0}
+  .rows>li{border-bottom:1px solid var(--line)}
+
+  .lrow{display:grid;grid-template-columns:44px minmax(0,1fr) 78px 112px minmax(0,150px);gap:14px;padding:13px 0;align-items:start}
+  .lrow .no{font:400 12px/1.6 var(--mono);color:var(--faint)}
+  .tk{font:500 13px/1.5 var(--mono)}
+  .q{color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .amt{font:400 13px/1.5 var(--mono);text-align:right}
+  .amt .tm{display:block;font-size:11.5px;color:var(--muted)}
+  .st{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;font-size:14px;line-height:1.5}
   .dot{position:relative;display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
   .pulse::after{content:"";position:absolute;inset:0;border-radius:50%;background:currentColor;animation:ring 1.4s ease-out infinite}
   .st.ok{color:var(--ok)}.st.warn{color:var(--warn)}.st.danger{color:var(--danger)}
-  .sub{font:400 11.5px/1.5 var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.02em}
+  .sub{font:400 11.5px/1.5 var(--mono);color:var(--muted);margin-top:2px}
   .tag{font:500 10px/1 var(--mono);letter-spacing:.12em;color:var(--warn);border:1px solid rgba(245,185,66,.4);border-radius:999px;padding:3px 6px;margin-left:6px}
-  td.id{font:400 12.5px/1.5 var(--mono);white-space:nowrap}
-  .rs{display:block;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  td.reason{color:var(--muted);font-size:13px;line-height:1.5}
-  tr.refused .tk,tr.refused td.amt{color:var(--muted)}
-  .empty{color:var(--muted);padding:22px 0;font-size:14px}
+  .id{font:400 12.5px/1.5 var(--mono);overflow-wrap:anywhere}
+  .reason{color:var(--muted);font-size:13px;line-height:1.5}
+  .lrow.refused .tk{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(255,90,95,.6)}
+  .lrow.refused .amt{color:var(--muted)}
+  .empty{color:var(--muted);padding:20px 0;font-size:14px}
 
-  .timeline{list-style:none;margin:0;padding:14px 0 0;max-height:400px;overflow:auto;-webkit-mask-image:linear-gradient(transparent 0,#000 22px);mask-image:linear-gradient(transparent 0,#000 22px)}
-  .timeline li{position:relative;padding:9px 0 9px 26px}
-  .timeline li::before{content:"";position:absolute;left:3px;top:0;bottom:0;width:1px;background:var(--line-strong)}
-  .timeline li:first-child::before{top:16px}.timeline li:last-child::before{bottom:calc(100% - 16px)}
-  .timeline li .dot{position:absolute;left:0;top:15px;color:var(--muted)}
-  .timeline .meta{display:flex;gap:12px;align-items:baseline;font:500 10.5px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-  .timeline .meta .k{color:var(--text)}
-  .timeline .msg{color:var(--muted);font-size:14px;line-height:1.45;margin-top:2px;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .timeline li.k-user .msg,.timeline li.k-answer .msg{color:var(--text)}
-  .timeline li.ok .dot,.timeline li.ok .k{color:var(--ok)}
-  .timeline li.warn .dot,.timeline li.warn .k{color:var(--warn)}
-  .timeline li.danger .dot,.timeline li.danger .k{color:var(--danger)}
-  .timeline li.k-user .dot,.timeline li.k-answer .dot{color:var(--text)}
+  #trace{max-height:560px;overflow:auto}
+  .trow{display:grid;grid-template-columns:62px 72px minmax(0,1fr);gap:12px;padding:10px 8px;margin:0 -8px;font-size:14px;line-height:1.5;border-bottom:1px solid var(--line)}
+  .trow .tm{font:400 12px/1.6 var(--mono);color:var(--faint)}
+  .trow .k{font:500 10.5px/1.9 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .trow .m{color:var(--muted);overflow-wrap:anywhere}
+  .trow.k-user .m,.trow.k-answer .m{color:var(--text)}
+  .trow.k-user .k,.trow.k-answer .k{color:var(--text)}
+  .trow.ok .k{color:var(--ok)}
+  .trow.warn{background:rgba(245,185,66,.08)}.trow.warn .k{color:var(--warn)}.trow.warn .m{color:var(--text)}
+  .trow.danger{background:rgba(255,90,95,.07)}.trow.danger .k{color:var(--danger)}.trow.danger .m{color:var(--text)}
 
   /* approval modal */
   .modal{display:none;position:fixed;inset:0;z-index:50;background:rgba(5,5,6,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:16px}
   .modal.on{display:flex}
-  .modal .box{position:relative;width:100%;max-width:480px;background:#0f0f11;border:1px solid var(--line-strong);border-radius:4px;padding:34px 34px 30px;animation:pop .2s ease-out both}
+  .modal .box{position:relative;width:100%;max-width:480px;background:#0f0f11;border:1px solid var(--line-strong);border-radius:6px;padding:32px 32px 28px;animation:pop .2s ease-out both}
   .modal .head{display:flex;align-items:center;gap:10px;color:var(--warn)}
   .modal .head .label{color:var(--warn)}
   #mtext{font-size:16px;line-height:1.6;margin:18px 0 26px;overflow-wrap:anywhere}
@@ -160,32 +153,21 @@
 
   /* responsive */
   @media (max-width:900px){
-    .hero{grid-template-columns:1fr;gap:28px;padding:28px 24px 32px}
-    .figures{text-align:left}
-  }
-  @media (max-width:720px){
-    .stats{grid-template-columns:1fr 1fr}
-    .stat:nth-child(3){border-left:0}
-    .stat:nth-child(n+3){border-top:1px solid var(--line)}
-    .stat{padding:16px 16px 18px}
-    .stat .v{font-size:22px}
-    .brand .sub{display:none}
+    .facts,.fact{justify-content:flex-start;align-items:flex-start}
+    .lrow{grid-template-columns:36px minmax(0,1fr) 70px 104px;}
+    .lrow .idcell{grid-column:2/-1}
   }
   @media (max-width:600px){
     .wrap{padding:0 16px}
-    .hero{padding:24px 18px 28px}
+    .brand .sub{display:none}
+    .askrow{flex-wrap:wrap}
+    .field{flex-basis:100%}
     #q{font-size:18px}
-    .controls .spacer{display:none}
-    /* ledger rows become stacked cards */
-    thead{display:none}
-    table,tbody,td{display:block}
-    tbody tr{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;padding:12px 0;border-top:1px solid var(--line)}
-    tbody tr:first-child{border-top:0}
-    td{border:0!important;padding:0}
-    td.amt{text-align:right}
-    td:nth-child(4),td:nth-child(5){grid-column:2/4;margin-top:6px}
-    td.empty{grid-column:1/-1}
-    .q{max-width:none}
+    .lrow{grid-template-columns:minmax(0,1fr) auto;gap:4px 12px}
+    .lrow .no{display:none}
+    .lrow .stcell,.lrow .idcell{grid-column:1/-1}
+    .trow{grid-template-columns:56px minmax(0,1fr)}
+    .trow .m{grid-column:1/-1}
   }
 </style></head><body>
 
@@ -193,71 +175,61 @@
   <div class="brand">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke="currentColor" stroke-opacity=".55"/><circle cx="12" cy="12" r="4" fill="currentColor"/><circle cx="18.2" cy="5.8" r="1.6" fill="currentColor"/></svg>
     <span>Oracle<span class="n">402</span></span>
+    <span class="sub">Agent spending, under control</span>
   </div>
   <div class="badges"><span id="b-llm" class="badge"></span><span id="b-pay" class="badge"></span><span id="b-run" class="badge"></span></div>
 </div></header>
 
 <main class="wrap">
-  <section class="hero" aria-label="Budget">
-    <i class="br tl"></i><i class="br tr"></i><i class="br bl"></i><i class="br bra"></i>
-    <div>
-      <h1>Agent spending,<br>under control.</h1>
+  <section class="budget" aria-label="Budget">
+    <div class="label">Spent against hard cap</div>
+    <div class="budget-row">
+      <div class="spent num"><span class="cur">$</span><span id="spent">0.000</span><span class="of">/ <b id="budget">0.000</b></span><span class="unit">USDC</span></div>
+      <div class="facts">
+        <div class="fact"><span class="label">Remaining</span><span class="v num" id="remaining">0.000</span></div>
+        <div class="fact"><span class="label">Approval above</span><span class="v num" id="appr">0.000</span></div>
+        <div class="fact"><span class="label">Max per call</span><span class="v num" id="maxcall">0.000</span></div>
+        <div class="fact"><span class="label">Gateway balance</span><span class="v num" id="gbal">n/a</span></div>
+      </div>
     </div>
-    <div class="figures">
-      <div class="label">Spent</div>
-      <div class="hero-num num"><span class="cur">$</span><span id="spent">0.000</span></div>
-      <div class="of"><span class="label">Of budget</span><span class="half-num num"><span class="cur">$</span><span id="budget">0.000</span><span class="unit">USDC</span></span></div>
-      <div class="meter" role="presentation"><div id="fill" style="width:0%"></div><div id="mark"></div></div>
-      <div class="meter-ends"><span>0</span><span>CAP</span></div>
-    </div>
-  </section>
-
-  <section class="stats" aria-label="Policy limits">
-    <div class="stat"><div class="label">Remaining</div><div class="v num"><span id="remaining">0.000</span><small>USDC</small></div></div>
-    <div class="stat"><div class="label">Approval above</div><div class="v num"><span id="appr">0.000</span><small>USDC</small></div></div>
-    <div class="stat"><div class="label">Max per call</div><div class="v num"><span id="maxcall">0.000</span><small>USDC</small></div></div>
-    <div class="stat"><div class="label">Gateway balance</div><div class="v num"><span id="gbal">n/a</span><small>USDC</small></div></div>
+    <div class="meter" role="presentation"><div id="fill" style="width:0%"></div><div id="mark"></div></div>
+    <div class="meter-ends"><span>0</span><span>CAP</span></div>
   </section>
 
   <section class="ask" aria-label="Ask the agent">
-    <label class="label" for="q">Ask the agent</label>
     <div class="askrow">
-      <input type="text" id="q" autocomplete="off" placeholder="What are the odds on the Fed decision in December?">
+      <div class="field"><input type="text" id="q" autocomplete="off" aria-label="Ask the agent" placeholder="Ask the agent: what are the odds on the Fed decision in December?"></div>
       <button class="btn primary" id="ask">Ask <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="btn danger" id="kill">Kill switch</button>
+      <button class="btn go" id="resume" style="display:none">Resume</button>
     </div>
-    <div class="chips">
-      <button class="btn chip" data-q="What are the odds on the Fed decision in December?">Fed December?</button>
-      <button class="btn chip" data-q="Where is the market expecting BTC on November 30?">BTC Nov 30?</button>
-      <button class="btn chip" data-q="Will crypto market structure legislation become law?">Crypto bill?</button>
+    <div class="under">
+      <div class="chips">
+        <button class="btn chip" data-q="What are the odds on the Fed decision in December?">Fed December</button>
+        <button class="btn chip" data-q="Where is the market expecting BTC on November 30?">BTC Nov 30</button>
+        <button class="btn chip" data-q="Will crypto market structure legislation become law?">Crypto bill</button>
+      </div>
+      <div class="quiet"><button class="link" id="resetSpend">Reset spend</button><button class="link" id="raise">Raise cap +0.01</button></div>
     </div>
-    <div id="answer" aria-live="polite"></div>
-  </section>
-
-  <section class="controls" aria-label="Safety controls">
-    <button class="btn danger" id="kill">Kill switch</button>
-    <button class="btn go" id="resume" style="display:none">Resume spending</button>
-    <span class="spacer"></span>
-    <button class="btn quiet" id="raise">Raise budget +0.01</button>
-    <button class="btn quiet" id="resetSpend">Reset spend</button>
+    <div class="qa" id="qa" aria-live="polite">
+      <div class="row"><span class="k">Q</span><span id="qtext"></span></div>
+      <div class="row"><span class="k">A</span><span id="answer"></span></div>
+    </div>
   </section>
 
   <div class="panels">
-    <section class="panel" aria-label="Payment ledger">
-      <h2><span class="label">Payment ledger</span><span class="label" id="ledgerCount"></span></h2>
-      <div class="scroll"><table>
-        <thead><tr><th>Time</th><th>Market</th><th>Amount</th><th>Status</th><th>Transfer</th></tr></thead>
-        <tbody id="ledger"></tbody>
-      </table></div>
-    </section>
-    <section class="panel" aria-label="Decision trace">
-      <h2><span class="label">Decision trace</span><span class="label" id="traceCount"></span></h2>
-      <ol class="timeline" id="trace"></ol>
-    </section>
+    <div class="panel" aria-label="Payment ledger">
+      <h2><span>Payment ledger</span><span class="label" id="ledgerCount"></span></h2>
+      <ol class="rows" id="ledger"></ol>
+    </div>
+    <div class="panel" aria-label="Decision trace">
+      <h2><span>Decision trace</span><span class="label" id="traceCount"></span></h2>
+      <div id="trace"></div>
+    </div>
   </div>
 </main>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mhead"><div class="box">
-  <i class="br tl"></i><i class="br tr"></i><i class="br bl"></i><i class="br bra"></i>
   <div class="head"><span class="dot pulse"></span><span class="label" id="mhead">Human approval required</span></div>
   <p id="mtext"></p>
   <div class="actions"><button class="btn primary" id="yes">Approve</button><button class="btn" id="no">Deny</button></div>
@@ -323,55 +295,66 @@ async function tick(){
   $('fill').style.background=s.killed||pct>=100?'var(--danger)':pct>=s.approveAfterUsdc/s.budgetUsdc*100?'var(--warn)':'var(--accent)';
   $('mark').style.left=(s.budgetUsdc?s.approveAfterUsdc/s.budgetUsdc*100:0)+'%';
   $('kill').style.display=s.killed?'none':''; $('resume').style.display=s.killed?'':'none';
-  $('b-llm').textContent=s.mode.llm?'LLM mode':'Scripted mode'; $('b-llm').className='badge '+(s.mode.llm?'ok':'soft');
+  $('b-llm').textContent=s.mode.llm?'LLM agent':'Scripted agent'; $('b-llm').className='badge '+(s.mode.llm?'ok':'soft');
   $('b-pay').textContent=s.mode.mockPay?'Mock pay':'Live pay · Arc testnet'; $('b-pay').className='badge '+(s.mode.mockPay?'soft':'ok');
   $('b-run').textContent=s.killed?'Killed':s.pending?'Awaiting approval':s.running?'Running':'Idle';
   $('b-run').className='badge '+(s.killed?'danger':s.pending?'warn':s.running?'live':'');
-  $('ask').disabled=s.running; $('answer').textContent=s.lastAnswer||'';
+  $('ask').disabled=s.running;
 
-  // ledger: paid rows from the server + refusals from the trace + the pending approval, newest first
+  // Q + A: the last question asked (from the trace) paired with the agent's answer to it.
+  const lastQ=[...s.trace].reverse().find(t=>t.kind==='user');
+  $('qa').classList.toggle('on',Boolean(lastQ));
+  $('qtext').textContent=lastQ?lastQ.msg:'';
+  const a=$('answer');
+  if(s.lastAnswer){a.textContent=s.lastAnswer;a.className='';}
+  else if(s.pending){a.textContent='Waiting for your approval to pay for a forecast';a.className='wait';}
+  else if(s.running){a.textContent='Working';a.className='wait';}
+  else{a.textContent='';a.className='';}
+
+  // ledger: paid rows from the server + refusals from the trace + the pending approval, numbered oldest first, shown newest first
   const rows=s.ledger.map(r=>({key:'p'+r.at+r.ticker,at:r.at,ticker:r.ticker,question:r.question,status:'paid',r}))
     .concat(refusals(s.trace));
   if(s.pending){
-    const ask=[...s.trace].reverse().find(t=>t.kind==='policy'&&/^APPROVAL/.test(t.msg));
-    rows.push({key:'w'+s.pending.id,at:ask?ask.t:new Date().toISOString(),ticker:s.pending.ticker,question:'',status:'awaiting',amount:s.pending.priceUsdc,reason:s.pending.reason});
+    const ap=[...s.trace].reverse().find(t=>t.kind==='policy'&&/^APPROVAL/.test(t.msg));
+    rows.push({key:'w'+s.pending.id,at:ap?ap.t:new Date().toISOString(),ticker:s.pending.ticker,question:lastQ?lastQ.msg:'',status:'awaiting',amount:s.pending.priceUsdc,reason:'Waiting for a human to approve or deny.'});
   }
-  rows.sort((a,b)=>a.at<b.at?1:a.at>b.at?-1:0);
+  rows.sort((a,b)=>a.at<b.at?-1:a.at>b.at?1:0).forEach((r,i)=>r.no=i+1);
+  rows.reverse();
   const ls=rows.map(r=>r.key+r.status).join('|');
   if(ls!==sig.ledger){
     sig.ledger=ls;
     $('ledger').innerHTML=rows.map(x=>{
       const [tone,label]=ST[x.status], isNew=!first&&!seen.ledger.has(x.key); seen.ledger.add(x.key);
-      const ev=`<div class="tk" title="${esc(x.question||'')}">${esc(x.ticker||'n/a')}</div>`;
+      const no=`<span class="no">${String(x.no).padStart(4,'0')}</span>`;
+      const ev=`<div><div class="tk">${esc(x.ticker||'n/a')}</div>${x.question?`<div class="q" title="${esc(x.question)}">${esc(x.question)}</div>`:''}</div>`;
       if(x.status==='paid'){const r=x.r;
-        return `<tr class="${isNew?'new':''}"><td class="t">${clock(r.at)}</td><td>${ev}</td><td class="amt">${fmt(r.amountUsdc)}</td>`+
-          `<td><span class="st ${tone}"><span class="dot"></span>${label}</span>${r.mock?'<span class="tag">MOCK</span>':''}${r.approvedByHuman?'<span class="tag">HUMAN</span>':''}</td>`+
-          `<td class="id"><span title="${esc(r.transaction||'')}">${esc(shortId(r.transaction)||'n/a')}</span></td></tr>`;
+        return `<li class="lrow ${isNew?'new':''}">${no}${ev}<div class="amt">${fmt(r.amountUsdc)}<span class="tm">${clock(r.at)}</span></div>`+
+          `<div class="stcell"><span class="st ${tone}"><span class="dot"></span>${label}</span>${r.mock?'<span class="tag">MOCK</span>':''}<div class="sub">${r.approvedByHuman?'human approved':'auto'}</div></div>`+
+          `<div class="idcell"><div class="id" title="${esc(r.transaction||'')}">${esc(shortId(r.transaction)||'n/a')}</div><div class="sub">Gateway transfer · ${esc(r.network||'')}</div></div></li>`;
       }
-      return `<tr class="refused ${isNew?'new':''}"><td class="t">${clock(x.at)}</td><td>${ev}</td><td class="amt">${x.amount!==undefined?fmt(x.amount):'none'}</td>`+
-        `<td><span class="st ${tone}"><span class="dot${x.status==='awaiting'?' pulse':''}"></span>${label}</span></td><td class="reason" title="${esc(x.reason)}"><span class="rs">${esc(x.reason)}</span></td></tr>`;
-    }).join('')||'<tr><td colspan="5" class="empty">No payments yet.</td></tr>';
+      return `<li class="lrow refused ${isNew?'new':''}">${no}${ev}<div class="amt">${x.amount!==undefined?fmt(x.amount):'none'}<span class="tm">${clock(x.at)}</span></div>`+
+        `<div class="stcell"><span class="st ${tone}"><span class="dot${x.status==='awaiting'?' pulse':''}"></span>${label}</span></div><div class="idcell reason">${esc(x.reason)}</div></li>`;
+    }).join('')||'<li class="empty">No payments yet. Ask the agent a question to start.</li>';
     const paid=s.ledger.length, refused=rows.filter(r=>['denied','blocked','failed'].includes(r.status)).length;
     $('ledgerCount').textContent=`${paid} paid · ${refused} refused${s.pending?' · 1 awaiting':''}`;
   }
 
-  // decision trace as a timeline (oldest first; stays pinned to the bottom unless scrolled up)
+  // decision trace (oldest first; stays pinned to the bottom unless scrolled up)
   const ts=s.trace.length?s.trace[0].t+s.trace.length+s.trace[s.trace.length-1].t:'';
   if(ts!==sig.trace){
     sig.trace=ts;
     const tr=$('trace'), atBottom=tr.scrollTop+tr.clientHeight>=tr.scrollHeight-20;
     tr.innerHTML=s.trace.map(t=>{
       const k=t.t+t.kind+t.msg, isNew=!first&&!seen.trace.has(k); seen.trace.add(k);
-      return `<li class="k-${t.kind} ${traceTone(t)} ${isNew?'new':''}"><span class="dot"></span><div class="meta"><span>${clock(t.t)}</span><span class="k">${esc(t.kind)}</span></div><div class="msg" title="${esc(t.msg)}">${esc(t.msg)}</div></li>`;
-    }).join('')||'<li class="empty" style="padding-left:0">The agent has not done anything yet.</li>';
+      return `<div class="trow k-${t.kind} ${traceTone(t)} ${isNew?'new':''}"><span class="tm">${clock(t.t)}</span><span class="k">${esc(t.kind)}</span><span class="m">${esc(t.msg)}</span></div>`;
+    }).join('')||'<div class="empty">The agent has not done anything yet.</div>';
     if(atBottom) tr.scrollTop=tr.scrollHeight;
-    $('traceCount').textContent=String(s.trace.length);
+    $('traceCount').textContent=`${s.trace.length} entries`;
   }
   first=false;
 
   if(s.pending){ $('modal').classList.add('on'); $('mtext').textContent=`Buy forecast for ${s.pending.ticker} at ${s.pending.priceUsdc} USDC? ${s.pending.reason}`; } else $('modal').classList.remove('on');
 }
-$('answer').onclick=()=>$('answer').classList.toggle('open');
 $('ask').onclick=()=>{const q=$('q').value.trim(); if(q) post('/api/ask',{question:q});};
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')$('ask').click();});
 document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('q').value=b.dataset.q; $('ask').click();});
